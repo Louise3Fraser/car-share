@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Typography,
@@ -6,11 +6,10 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import "../style/Login.css";
-import CarShare from "../images/CarShare.png"
-import { users } from "../dataServices/Users";
+import "../../style/Login.css";
+import CarShare from "../../images/CarShare.png";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 
 function userExists(arr, key, val) {
   for (var i = 0; i < arr.length; i++) {
@@ -24,18 +23,31 @@ export default function Login() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const [loginResponse, setLoginResponse] = useState();
   const [error, setError] = useState(" ");
 
-  const handleSubmit = () => {
-    if (userExists(users, "email", username)) {
-      if (userExists(users, "password", password)) {
-        sessionStorage.setItem("user", Math.random());
-        navigate("/");
-      }
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.get("http://localhost:8800/credentials");
+      setLoginResponse(response.data);
+    } catch (err) {
+      console.log(err);
+      setError("Server error");
     }
-    setError("Incorrect credentials");
   };
+
+  useEffect(() => {
+    if (loginResponse) {
+      if (userExists(loginResponse, "email", username)) {
+        if (userExists(loginResponse, "password", password)) {
+          const user = loginResponse.find((item) => item.email === username);
+          sessionStorage.setItem("user", JSON.stringify(user));
+          navigate("/");
+        }
+      }
+      setError("Incorrect credentials");
+    }
+  }, [loginResponse, navigate, setLoginResponse]);
 
   return (
     <div className="Login">
@@ -79,7 +91,9 @@ export default function Login() {
           >
             Login
           </Button>
-          <Typography color="error" variant="body">{error}</Typography>
+          <Typography color="error" variant="body">
+            {error}
+          </Typography>
         </CardContent>
       </Card>
     </div>

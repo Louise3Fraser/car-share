@@ -1,0 +1,27 @@
+.colors {
+  border-radius: 100%;
+}
+
+.color-options {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.color-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.columns {
+    display: flex;
+    flex-direction: row;
+    background-color: white;
+    border-radius: 20px;
+}
+
+.profile-background {
+    padding: 40px;
+}

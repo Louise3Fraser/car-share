@@ -1,0 +1,9 @@
+.toolbar-logo {
+  max-width: 110px;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
