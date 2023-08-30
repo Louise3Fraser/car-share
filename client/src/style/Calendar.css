@@ -33,3 +33,9 @@ b { /* used for event dates/times */
   margin-right: 3px;
 }
 
+.icon-format {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 20px
+}

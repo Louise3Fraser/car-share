@@ -27,15 +27,18 @@ backend.get("/event", (req, res) => {
 
 backend.post("/event", (req, res) => {
   const q =
-    "INSERT INTO event(`title`, `desc`, `dist`, `date`, `user`, `color`) VALUES (?)";
+    "INSERT INTO event(`title`, `description`, `distance`, `date`, `user`, `color`, `allDay`, `start`, `end`) VALUES (?)";
 
   const values = [
     req.body.title,
-    req.body.desc,
-    req.body.dist,
+    req.body.description,
+    req.body.distance,
     req.body.date,
     req.body.user,
-    req.body.color
+    req.body.color,
+    req.body.allDay,
+    req.body.start,
+    req.body.end,
   ];
 
   calendar_db.query(q, [values], (err, data) => {
@@ -57,15 +60,18 @@ backend.delete("/event/:id", (req, res) => {
 backend.put("/event/:id", (req, res) => {
   const eventId = req.params.id;
   const q =
-    "UPDATE event SET `title`= ?, `desc`= ?, `dist`= ?, `date`=?, `user`=?, `color`=? WHERE id = ?";
+    "UPDATE event SET `title`= ?, `description`= ?, `distance`= ?, `date`=?, `user`=?, `color`=?, `allDay`=?, `start`=?, `end`=? WHERE id = ?";
 
   const values = [
     req.body.title,
-    req.body.desc,
-    req.body.dist,
+    req.body.description,
+    req.body.distance,
     req.body.date,
     req.body.user,
-    req.body.color
+    req.body.color,
+    req.body.allDay,
+    req.body.start,
+    req.body.end,
   ];
 
   calendar_db.query(q, [...values, eventId], (err, data) => {
@@ -78,11 +84,9 @@ backend.listen(8800, () => {
   console.log("Connected to backend.");
 });
 
-
 // ----------------------
 
-
-// User: 
+// User:
 const user_db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -102,14 +106,9 @@ backend.get("/credentials", (req, res) => {
 });
 
 backend.post("/credentials", (req, res) => {
-  const q =
-    "INSERT INTO credentials(`name`, `email`, `password`) VALUES (?)";
+  const q = "INSERT INTO credentials(`name`, `email`, `password`) VALUES (?)";
 
-  const values = [
-    req.body.name,
-    req.body.email,
-    req.body.password,
-  ];
+  const values = [req.body.name, req.body.email, req.body.password];
 
   user_db.query(q, [values], (err, data) => {
     if (err) return res.send(err);
@@ -132,11 +131,7 @@ backend.put("/credentials/:id", (req, res) => {
   const q =
     "UPDATE credentials SET `name`= ?, `email`= ?, `password`= ? WHERE id = ?";
 
-  const values = [
-    req.body.name,
-    req.body.email,
-    req.body.password,
-  ];
+  const values = [req.body.name, req.body.email, req.body.password];
 
   user_db.query(q, [...values, credentialsId], (err, data) => {
     if (err) return res.send(err);
@@ -144,7 +139,7 @@ backend.put("/credentials/:id", (req, res) => {
   });
 });
 
-// User profile fields: 
+// User profile fields:
 
 backend.get("/profile", (req, res) => {
   const q = "SELECT * FROM profile";
@@ -157,15 +152,11 @@ backend.get("/profile", (req, res) => {
   });
 });
 
-
 backend.put("/profile/:id", (req, res) => {
   const profileId = req.params.id;
-  const q =
-    "UPDATE profile SET `color`= ? WHERE idprofile = ?";
+  const q = "UPDATE profile SET `color`= ? WHERE idprofile = ?";
 
-  const values = [
-    req.body.color,
-  ];
+  const values = [req.body.color];
 
   user_db.query(q, [...values, profileId], (err, data) => {
     if (err) return res.send(err);
@@ -184,11 +175,9 @@ backend.get("/credentials", (req, res) => {
   });
 });
 
-
 // ----------------------
 
-
-// Dashboard: 
+// Dashboard:
 const dashboard_db = mysql.createConnection({
   host: "localhost",
   user: "root",

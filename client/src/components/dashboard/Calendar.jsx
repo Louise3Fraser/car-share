@@ -12,10 +12,14 @@ import {
   Select,
   TextField,
   Typography,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
-import SmallCar from "../../images/SmallCar.svg";
 import axios from "axios";
-import EditEvent from "./calendar-modals/EditEvent";
+import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
+import NotesIcon from "@mui/icons-material/Notes";
+import PersonIcon from "@mui/icons-material/Person";
+import moment from "moment";
 
 const style = {
   position: "absolute",
@@ -58,37 +62,40 @@ export default function CalendarView() {
   const [loading, setLoading] = useState(true);
 
   const [currentEvent, setCurrentEvent] = useState("");
-  const [title, setTitle] = useState(initialEvents);
-  const [description, setDescription] = useState(initialEvents);
-  const [distance, setDistance] = useState("");
-  const [user, setUser] = useState("");
-  const [initialUser, setInitialUser] = useState(userObject.name);
-  const [startDate, setStartDate] = useState("");
-  const [color, setColor] = useState("");
+  const [newEventData, setNewEventData] = useState({
+    title: "",
+    description: "",
+    user: userObject.name,
+    distance: "",
+    start: "",
+    end: "",
+    color: "",
+    allDay: undefined,
+    date: "",
+    id: "",
+  });
 
-  // Modal for events:
-  const [openEditEvent, setOpenEditEvent] = useState(false);
-  const handleOpenEditEvent = () => setOpenEditEvent(true);
-  const handleCloseEditEvent = useCallback(() => {
-    setOpenEditEvent(false)
+  const [modal, setModal] = useState("");
+
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = useCallback(() => {
+    setOpenModal(false);
   }, []);
-
-  const [openAdd, setOpenAdd] = useState(false);
-  const handleOpenAdd = () => setOpenAdd(true);
-  const handleCloseAdd = () => setOpenAdd(false);
 
   const formatEvents = () => {
     let formattedEvents = [];
+    console.log(data);
     data.forEach((data) => {
       const formattedEvent = {
         id: data.id,
         title: data.title,
         start: data.date,
         extendedProps: {
-          distance: data.dist,
+          distance: data.distance,
           user: data.user,
         },
-        description: data.desc,
+        description: data.description,
         color: data.color,
       };
       formattedEvents.push(formattedEvent);
@@ -109,10 +116,34 @@ export default function CalendarView() {
   }, []);
 
   useEffect(() => {
-    if (data[0] !== undefined) {
+    if (currentEvent.title) {
+      setNewEventData({
+        title: currentEvent.title,
+        description: currentEvent.extendedProps.description,
+        user: currentEvent.extendedProps.user,
+        distance: currentEvent.extendedProps.distance,
+        start: currentEvent.extendedProps.start,
+        end: currentEvent.extendedProps.end,
+        color: currentEvent.backgroundColor,
+        allDay: currentEvent.allDay,
+        date: currentEvent.start,
+        id: currentEvent.id,
+      });
+    } else {
+      if (currentEvent) handleOpenModal();
+    }
+  }, [currentEvent]);
+
+  useEffect(() => {
+    if (newEventData.title) {
+      handleOpenModal();
+    }
+  }, [newEventData]);
+
+  useEffect(() => {
+    if (data[0]) {
       setLoading(false);
     }
-
     const fetchColor = async () => {
       try {
         const response = await axios.get(`http://localhost:8800/profile`);
@@ -124,54 +155,53 @@ export default function CalendarView() {
     fetchColor();
   }, [data]);
 
-  useEffect(() => {
-    if (profileData && profileData[0]) {
-      const user = profileData.find((item) => item.idprofile === id);
-      setColor(user.color);
-    }
-  }, [profileData]);
-
-
+  // useEffect(() => {
+  //   if (profileData && profileData[0]) {
+  //     const user = profileData.find((item) => item.idprofile === id);
+  //     setNewEvent({...allValues, [e.target.color]: user.color});
+  //   }
+  // }, [profileData]);
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && data) {
       formatEvents();
     }
   }, [loading]);
 
-  useEffect(() => {
-    if (currentEvent) {
-      setUser(currentEvent.extendedProps.user);
-    }
-  }, [currentEvent]);
+  // useEffect(() => {
+  //   if (currentEvent) {
+  //     setNewEvent(currentEvent);
+  //   }
+  //   console.log(newEvent)
+  // }, [currentEvent]);
 
   const addEvent = async () => {
-    handleCloseAdd();
-    try {
-      const response = await axios.post("http://localhost:8800/event", {
-        title: title,
-        dist: distance,
-        user: user || initialUser,
-        date: startDate,
-        desc: description,
-        color: color,
-      });
-      setData(response);
-    } catch (err) {
-      console.log(err);
-    }
+    handleCloseModal();
+    // try {
+    //   const response = await axios.post("http://localhost:8800/event", {
+    //     newEvent,
+    //   });
+    //   setData(response);
+    //   console.log(response);
+    // } catch (err) {
+    //   console.log(err);
+    // }
   };
 
   const editEvent = async () => {
-    handleCloseEditEvent();
-
+    handleCloseModal();
     try {
       const response = await axios.put(`http://localhost:8800/event/${id}`, {
-        title: title,
-        dist: distance,
-        user: user || initialUser,
-        date: startDate,
-        desc: description,
+        id: newEventData.id,
+        title: newEventData.title,
+        start: newEventData.date,
+        end: newEventData.date,
+        distance: newEventData.distance,
+        user: newEventData.user,
+        description: newEventData.description,
+        date: newEventData.date,
+        allDay: newEventData.allDay,
+        color: newEventData.color,
       });
       setData(response);
     } catch (err) {
@@ -181,16 +211,16 @@ export default function CalendarView() {
 
   // To create a new event
   const handleDateClick = (selected) => {
-    setStartDate(selected.start);
-    handleOpenAdd();
+    console.log(selected);
+    setModal("create");
+    setCurrentEvent(selected);
   };
 
   // For viewing/editing events
   const handleEventClick = (selected) => {
-    console.log(currentEvent);
-
+    console.log(selected.event);
+    setModal("edit");
     setCurrentEvent(selected.event);
-    handleOpenEditEvent();
   };
 
   return (
@@ -199,8 +229,7 @@ export default function CalendarView() {
         <FullCalendar
           height="85vh"
           headerToolbar={{
-            left: "dayGridMonth,timeGridWeek,timeGridDay",
-            center: "title",
+            left: "title",
             right: "today prev,next",
           }}
           select={handleDateClick}
@@ -213,85 +242,181 @@ export default function CalendarView() {
           selectable={true}
           selectMirror={true}
           dayMaxEvents={true}
+          displayEventTime={false}
         />
       ) : (
         <div />
       )}
-      <EditEvent
-        currentEvent={currentEvent}
-        openEditEvent={openEditEvent}
-        handleCloseEditEvent={handleCloseEditEvent}
-      />
-
       <Modal
-        open={openAdd}
-        onClose={handleCloseAdd}
+        open={openModal}
+        onClose={handleCloseModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
           <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "5px",
-            }}
+            style={{ display: "flex", flexDirection: "column", gap: "20px" }}
           >
-            <img
-              style={{ height: "18px" }}
-              className="logo"
-              src={SmallCar}
-              alt="smallCar"
-            />
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Add New Event
-            </Typography>
-          </div>
-          <Typography>
-            {currentEvent ? currentEvent.start.toString() : ""}
-          </Typography>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: "50%",
-              gap: "10px",
-            }}
-          >
-            <Select
-              sx={{ maxWidth: "100px", maxHeight: "30px" }}
-              value={initialUser}
-              onChange={(e) => setInitialUser(e.target.value)}
-            >
-              {users.map((user) => {
-                return (
-                  <MenuItem key={user.id} value={user.name}>
-                    {user.name}
-                  </MenuItem>
-                );
-              })}
-            </Select>
+            {modal === "create" ? (
+              <Typography
+                sx={{ display: "flex", justifyContent: "center" }}
+                id="modal-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                Create New Event
+              </Typography>
+            ) : (
+              <Typography
+                sx={{ display: "flex", justifyContent: "center" }}
+                id="modal-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                Edit Event
+              </Typography>
+            )}
+
             <TextField
+              required
               variant="standard"
-              onChange={(e) => setTitle(e.target.value)}
+              defaultValue={newEventData ? newEventData.title : ""}
+              onChange={(e) =>
+                setNewEventData({
+                  ...newEventData,
+                  title: e.target.value,
+                })
+              }
               label="Title"
             />
-            <TextField
-              variant="standard"
-              onChange={(e) => setDescription(e.target.value)}
-              label="Description"
-              multiline
-            />
-            <TextField
-              variant="standard"
-              onChange={(e) => setDistance(e.target.value)}
-              label="Estimated distance"
-            />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <TextField
+                required
+                id="time"
+                label="Start"
+                type="time"
+                defaultValue={newEventData ? newEventData.start : ""}
+                onChange={(e) =>
+                  setNewEventData({
+                    ...newEventData,
+                    start: e.target.value,
+                  })
+                }
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                disabled={newEventData ? newEventData.allDay : false}
+              />
+              <TextField
+                id="time"
+                onChange={(e) =>
+                  setNewEventData({
+                    ...newEventData,
+                    end: e.target.value,
+                  })
+                }
+                defaultValue={newEventData ? newEventData.end : ""}
+                disabled={newEventData ? newEventData.allDay : false}
+                label="End"
+                type="time"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    defaultValue={newEventData ? newEventData.allDay : false}
+                    checked={newEventData ? newEventData.allDay : false}
+                    onChange={(e) =>
+                      setNewEventData({
+                        ...newEventData,
+                        allDay: !newEventData.allDay,
+                      })
+                    }
+                  />
+                }
+                labelPlacement="start"
+                label="All day?"
+              />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
+            >
+              <div className="icon-format">
+                <PersonIcon />
+                <Select
+                  sx={{ maxWidth: "100px", maxHeight: "30px" }}
+                  defaultValue={newEventData ? newEventData.user : ""}
+                  onChange={(e) =>
+                    setNewEventData({
+                      ...newEventData,
+                      user: e.target.value,
+                    })
+                  }
+                >
+                  {users.map((user) => {
+                    return (
+                      <MenuItem key={user.id} value={user.name}>
+                        {user.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </div>
+              <div className="icon-format">
+                <NotesIcon />
+                <TextField
+                  required
+                  variant="standard"
+                  defaultValue={newEventData ? newEventData.description : ""}
+                  onChange={(e) =>
+                    setNewEventData({
+                      ...newEventData,
+                      description: e.target.value,
+                    })
+                  }
+                  label="Description"
+                  multiline
+                />
+              </div>
+
+              <div className="icon-format">
+                <LocalGasStationIcon />
+                <TextField
+                  required
+                  variant="standard"
+                  defaultValue={newEventData ? newEventData.distance : ""}
+                  onChange={(e) =>
+                    setNewEventData({
+                      ...newEventData,
+                      distance: e.target.value,
+                    })
+                  }
+                  label="Estimated distance"
+                />
+              </div>
+            </div>
+            {modal === "create" ? (
+              <Button onClick={addEvent} sx={{ color: "white" }}>
+                Create
+              </Button>
+            ) : (
+              <Button onClick={editEvent} sx={{ color: "white" }}>
+                Save
+              </Button>
+            )}
           </div>
-          <Button onClick={addEvent} sx={{ color: "white" }}>
-            Save
-          </Button>
         </Box>
       </Modal>
     </Box>
