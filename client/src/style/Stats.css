@@ -1,5 +1,4 @@
 .Stats {
-    display: flex;
-    align-items: flex-end;
-    padding: 50px;
+  display: flex;
+  gap: 20px;
 }
