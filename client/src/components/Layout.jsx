@@ -6,7 +6,8 @@ import "../style/Layout.css";
 import LogoutIcon from "@mui/icons-material/Logout";
 import GridViewIcon from "@mui/icons-material/GridView";
 import { useNavigate } from "react-router-dom";
-import Calendar from "./dashboard/Calendar";
+import Calendar from "./dashboard/Calendar2";
+
 import Welcome from "./dashboard/Welcome";
 import Stats from "./dashboard/Stats";
 
