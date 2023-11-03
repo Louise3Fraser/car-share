@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
 import "../../style/Calendar.css";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
   Box,
   Button,
@@ -15,11 +14,22 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
-import axios from "axios";
 import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import NotesIcon from "@mui/icons-material/Notes";
 import PersonIcon from "@mui/icons-material/Person";
-import moment from "moment";
+import {
+  formatEvents,
+  simpleToISO,
+  dateObjToISO,
+} from "./helpers/calendarHelpers";
+import {
+  editEvent,
+  addEvent,
+  fetchEvents,
+  fetchProfileData,
+} from "./helpers/dataApis";
+
+const localizer = momentLocalizer(moment);
 
 const style = {
   position: "absolute",
@@ -50,203 +60,133 @@ const users = [
   },
 ];
 
-export default function CalendarView() {
-  const initialEvents = [];
-  const storage = sessionStorage.getItem("user");
-  const userObject = JSON.parse(storage);
-  const id = userObject.id;
-
+export default function Calendar2() {
   const [data, setData] = useState([]);
-  const [profileData, setProfileData] = useState([]);
-  const [events, setEvents] = useState();
   const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState();
+  const [state, setState] = useState();
+  const [originalStart, setOriginalStart] = useState();
+  const [originalEnd, setOriginalEnd] = useState();
+  const [profileData, setProfileData] = useState();
 
-  const [currentEvent, setCurrentEvent] = useState("");
-  const [newEventData, setNewEventData] = useState({
-    title: "",
-    description: "",
-    user: userObject.name,
-    distance: "",
-    start: "",
-    end: "",
-    color: "",
-    allDay: undefined,
-    date: "",
-    id: "",
-  });
-
-  const [modal, setModal] = useState("");
-
+  // Modals:
+  const [modal, setModal] = useState("empty");
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = useCallback(() => {
+    setModal("empty");
     setOpenModal(false);
   }, []);
 
-  const formatEvents = () => {
-    let formattedEvents = [];
-    console.log(data);
-    data.forEach((data) => {
-      const formattedEvent = {
-        id: data.id,
-        title: data.title,
-        start: data.date,
-        extendedProps: {
-          distance: data.distance,
-          user: data.user,
-        },
-        description: data.description,
-        color: data.color,
-      };
-      formattedEvents.push(formattedEvent);
-    });
-    setEvents(formattedEvents);
-  };
-
+  // Get database events
   useEffect(() => {
-    const fetchEvents = async () => {
+    async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:8800/event");
-        setData(response.data);
+        const events = await fetchEvents();
+        const profile = await fetchProfileData();
+        setData(events);
+        setProfileData(profile);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
-    };
-    fetchEvents();
+    }
+    fetchData();
   }, []);
 
   useEffect(() => {
-    if (currentEvent.title) {
-      setNewEventData({
-        title: currentEvent.title,
-        description: currentEvent.extendedProps.description,
-        user: currentEvent.extendedProps.user,
-        distance: currentEvent.extendedProps.distance,
-        start: currentEvent.extendedProps.start,
-        end: currentEvent.extendedProps.end,
-        color: currentEvent.backgroundColor,
-        allDay: currentEvent.allDay,
-        date: currentEvent.start,
-        id: currentEvent.id,
-      });
-    } else {
-      if (currentEvent) handleOpenModal();
-    }
-  }, [currentEvent]);
-
-  useEffect(() => {
-    if (newEventData.title) {
-      handleOpenModal();
-    }
-  }, [newEventData]);
-
-  useEffect(() => {
-    if (data[0]) {
-      setLoading(false);
-    }
-    const fetchColor = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8800/profile`);
-        setProfileData(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchColor();
-  }, [data]);
-
-  // useEffect(() => {
-  //   if (profileData && profileData[0]) {
-  //     const user = profileData.find((item) => item.idprofile === id);
-  //     setNewEvent({...allValues, [e.target.color]: user.color});
-  //   }
-  // }, [profileData]);
-
-  useEffect(() => {
-    if (!loading && data) {
-      formatEvents();
+    if (!loading) {
+      const events = formatEvents(data);
+      setEvents(events);
     }
   }, [loading]);
 
-  // useEffect(() => {
-  //   if (currentEvent) {
-  //     setNewEvent(currentEvent);
-  //   }
-  //   console.log(newEvent)
-  // }, [currentEvent]);
+  useEffect(() => {
+    if (data && profileData) {
+      setLoading(false);
+    }
+  }, [data]);
 
-  const addEvent = async () => {
+  // handle click of adding new event. sends request
+  const clickAddEvent = async () => {
     handleCloseModal();
-    // try {
-    //   const response = await axios.post("http://localhost:8800/event", {
-    //     newEvent,
-    //   });
-    //   setData(response);
-    //   console.log(response);
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    // addEvent(newEventData);
   };
 
-  const editEvent = async () => {
+  // handle click of editing an event. sends request
+  const clickEditEvent = async () => {
     handleCloseModal();
-    try {
-      const response = await axios.put(`http://localhost:8800/event/${id}`, {
-        id: newEventData.id,
-        title: newEventData.title,
-        start: newEventData.date,
-        end: newEventData.date,
-        distance: newEventData.distance,
-        user: newEventData.user,
-        description: newEventData.description,
-        date: newEventData.date,
-        allDay: newEventData.allDay,
-        color: newEventData.color,
-      });
-      setData(response);
-    } catch (err) {
-      console.log(err);
-    }
+    const events = editEvent(state);
+    setData(events);
   };
 
   // To create a new event
   const handleDateClick = (selected) => {
-    console.log(selected);
     setModal("create");
-    setCurrentEvent(selected);
+    setState(selected);
   };
 
   // For viewing/editing events
   const handleEventClick = (selected) => {
-    console.log(selected.event);
     setModal("edit");
-    setCurrentEvent(selected.event);
+    setState(selected);
   };
+
+  useEffect(() => {
+    if (modal != "empty") {
+      setState({
+        title: state.title,
+        description: state.description,
+        user: state.user,
+        distance: state.distance,
+        start: state.start,
+        end: state.end,
+        allDay: state.allDay,
+        id: state.id,
+      });
+      setOriginalStart(state.start);
+      setOriginalEnd(state.end);
+      handleOpenModal();
+    }
+  }, [modal]);
+
+  function formatEndDate(newTime) {
+    return simpleToISO(newTime, originalEnd);
+  }
+
+  function formatStartDate(newTime) {
+    return simpleToISO(newTime, originalStart);
+  }
 
   return (
     <Box>
-      {events ? (
-        <FullCalendar
-          height="85vh"
-          headerToolbar={{
-            left: "title",
-            right: "today prev,next",
-          }}
-          select={handleDateClick}
-          eventClick={handleEventClick}
-          eventsSet={(events) => setEvents(events)}
-          initialEvents={events}
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          editable={true}
+      {!loading ? (
+        <Calendar
+          localizer={localizer}
+          defaultView="month"
+          views={["month", "week"]}
           selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          displayEventTime={false}
+          events={events}
+          style={{ height: "100vh" }}
+          startAccessor="start"
+          endAccessor="end"
+          onSelectEvent={(event) => handleEventClick(event)}
+          onSelectSlot={(event) => handleDateClick(event)}
+          eventPropGetter={(event, start, end, isSelected) => {
+            let newStyle = {
+              backgroundColor: event.color,
+              borderRadius: "0px",
+              border: "none",
+            };
+            return {
+              className: "",
+              style: newStyle,
+            };
+          }}
         />
       ) : (
         <div />
       )}
+
       <Modal
         open={openModal}
         onClose={handleCloseModal}
@@ -280,10 +220,10 @@ export default function CalendarView() {
             <TextField
               required
               variant="standard"
-              defaultValue={newEventData ? newEventData.title : ""}
+              defaultValue={state ? state.title : ""}
               onChange={(e) =>
-                setNewEventData({
-                  ...newEventData,
+                setState({
+                  ...state,
                   title: e.target.value,
                 })
               }
@@ -301,28 +241,36 @@ export default function CalendarView() {
                 id="time"
                 label="Start"
                 type="time"
-                defaultValue={newEventData ? newEventData.start : ""}
+                defaultValue={
+                  state
+                    ? moment(state.start).toDate().toTimeString().split(" ")[0]
+                    : ""
+                }
                 onChange={(e) =>
-                  setNewEventData({
-                    ...newEventData,
-                    start: e.target.value,
+                  setState({
+                    ...state,
+                    start: formatStartDate(e.target.value),
                   })
                 }
                 InputLabelProps={{
                   shrink: true,
                 }}
-                disabled={newEventData ? newEventData.allDay : false}
+                disabled={state ? state.allDay : false}
               />
               <TextField
                 id="time"
                 onChange={(e) =>
-                  setNewEventData({
-                    ...newEventData,
-                    end: e.target.value,
+                  setState({
+                    ...state,
+                    end: formatEndDate(e.target.value),
                   })
                 }
-                defaultValue={newEventData ? newEventData.end : ""}
-                disabled={newEventData ? newEventData.allDay : false}
+                defaultValue={
+                  state
+                    ? moment(state.end).toDate().toTimeString().split(" ")[0]
+                    : ""
+                }
+                disabled={state ? state.allDay : false}
                 label="End"
                 type="time"
                 InputLabelProps={{
@@ -332,12 +280,12 @@ export default function CalendarView() {
               <FormControlLabel
                 control={
                   <Checkbox
-                    defaultValue={newEventData ? newEventData.allDay : false}
-                    checked={newEventData ? newEventData.allDay : false}
+                    defaultValue={state ? state.allDay : false}
+                    checked={state ? state.allDay : false}
                     onChange={(e) =>
-                      setNewEventData({
-                        ...newEventData,
-                        allDay: !newEventData.allDay,
+                      setState({
+                        ...state,
+                        allDay: !state.allDay,
                       })
                     }
                   />
@@ -357,10 +305,10 @@ export default function CalendarView() {
                 <PersonIcon />
                 <Select
                   sx={{ maxWidth: "100px", maxHeight: "30px" }}
-                  defaultValue={newEventData ? newEventData.user : ""}
+                  defaultValue={state ? state.user : ""}
                   onChange={(e) =>
-                    setNewEventData({
-                      ...newEventData,
+                    setState({
+                      ...state,
                       user: e.target.value,
                     })
                   }
@@ -379,10 +327,10 @@ export default function CalendarView() {
                 <TextField
                   required
                   variant="standard"
-                  defaultValue={newEventData ? newEventData.description : ""}
+                  defaultValue={state ? state.description : ""}
                   onChange={(e) =>
-                    setNewEventData({
-                      ...newEventData,
+                    setState({
+                      ...state,
                       description: e.target.value,
                     })
                   }
@@ -396,10 +344,10 @@ export default function CalendarView() {
                 <TextField
                   required
                   variant="standard"
-                  defaultValue={newEventData ? newEventData.distance : ""}
+                  defaultValue={state ? state.distance : ""}
                   onChange={(e) =>
-                    setNewEventData({
-                      ...newEventData,
+                    setState({
+                      ...state,
                       distance: e.target.value,
                     })
                   }
@@ -408,11 +356,11 @@ export default function CalendarView() {
               </div>
             </div>
             {modal === "create" ? (
-              <Button onClick={addEvent} sx={{ color: "white" }}>
+              <Button onClick={clickAddEvent} sx={{ color: "white" }}>
                 Create
               </Button>
             ) : (
-              <Button onClick={editEvent} sx={{ color: "white" }}>
+              <Button onClick={clickEditEvent} sx={{ color: "white" }}>
                 Save
               </Button>
             )}
