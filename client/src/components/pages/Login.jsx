@@ -7,7 +7,7 @@ import {
   CardContent,
 } from "@mui/material";
 import "../../style/Login.css";
-import CarShare from "../../images/CarShare.png";
+import CarShare from "../../images/logo-black.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -51,17 +51,30 @@ export default function Login() {
 
   return (
     <div className="Login">
-      <Card sx={{ borderRadius: 5, padding: "60px" }}>
+      <Card
+        sx={{
+          backgroundColor: "transparent",
+          borderRadius: 5,
+          padding: "60px",
+          paddingBottom: "20px",
+        }}
+        elevation={0}
+      >
         <CardContent
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: "25px",
+            gap: "30px",
             padding: "0px",
           }}
         >
-          <img className="logo" src={CarShare} alt="cplus" />
+          <img
+            className="logo"
+            src={CarShare}
+            alt="cplus"
+            style={{ width: "150px" }}
+          />
           <Typography variant="body">
             Please enter your username and password
           </Typography>
@@ -84,7 +97,7 @@ export default function Login() {
           </div>
           <Button
             color="primary"
-            variant="contained"
+            variant="outlined"
             size="small"
             onClick={handleSubmit}
             fullWidth

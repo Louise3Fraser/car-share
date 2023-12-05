@@ -1421,35 +1421,6 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-8.46.0.tgz"
   integrity sha512-a8TLtmPi8xzPkCbp/OGFUo5yhRkHM2Ko9kOWP4znJr0WAhWyThaw3PnwX4vOTWOAMsV2uRt32PPDcEz63esSaA==
 
-"@fullcalendar/core@^6.1.8":
-  version "6.1.8"
-  resolved "https://registry.npmjs.org/@fullcalendar/core/-/core-6.1.8.tgz"
-  integrity sha512-i8JBIvZCWGO9dsMEDcx9bnsQZ9PtGSJdOXGgWbhLaGq2iq41OBdp9g9gM4b/Otv2oK8bL5Gl6CsMmb/HkDtA6Q==
-  dependencies:
-    preact "~10.12.1"
-
-"@fullcalendar/daygrid@^6.1.8", "@fullcalendar/daygrid@~6.1.8":
-  version "6.1.8"
-  resolved "https://registry.npmjs.org/@fullcalendar/daygrid/-/daygrid-6.1.8.tgz"
-  integrity sha512-kCZxQFKb9Vqa3CZRX0v7rMSJ2mlTt4gDpyLfiNJKxUAq7W51uKurPaFZWicaXy1ESHVBxKNlbx5uNjBpyu50JQ==
-
-"@fullcalendar/interaction@^6.1.8":
-  version "6.1.8"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/interaction/-/interaction-6.1.8.tgz#36c35bd5718f893e8215a45d48a6ef7d5fcc4650"
-  integrity sha512-r6W4E9ohaA87M2uPSlmpE2WT7Fzu7LN0u2pE6D/tThruCEaAPbN8Pw5+sqclsuyTIL09mg0eSJm/ggJekTabSA==
-
-"@fullcalendar/react@^6.1.8":
-  version "6.1.8"
-  resolved "https://registry.npmjs.org/@fullcalendar/react/-/react-6.1.8.tgz"
-  integrity sha512-E8GQSQyZHkjpwxQW5Vci7iZgN7f33ntuRcvfGii4Fn35t9VHGz2SEyKAWXpVf38elcKTZKVgajU9ipStd+1LEg==
-
-"@fullcalendar/timegrid@^6.1.8":
-  version "6.1.8"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/timegrid/-/timegrid-6.1.8.tgz#30b9860eb900c5dc9b72ceaab98c0728018a0ff1"
-  integrity sha512-3+3KHHCoNcaLs/gQt004hAqICbY5+WAffrZ0ePv+80HFB1OVh8BQ5XXLHSOUbTvXdgtUTcfBHuw9fhO31kt5gA==
-  dependencies:
-    "@fullcalendar/daygrid" "~6.1.8"
-
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.11.10.tgz"
@@ -6988,7 +6959,7 @@ mkdirp@~0.5.1:
   dependencies:
     minimist "^1.2.6"
 
-moment-timezone@^0.5.40:
+moment-timezone@^0.5.40, moment-timezone@^0.5.43:
   version "0.5.43"
   resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.43.tgz#3dd7f3d0c67f78c23cd1906b9b2137a09b3c4790"
   integrity sha512-72j3aNyuIsDxdF1i7CEgV2FfxM1r6aaqJyLB2vwb33mXYyoyLly+F1zbWqhA3/bVIoJ4szlUoMbUnVdid32NUQ==
@@ -7994,11 +7965,6 @@ postcss@^8.3.5, postcss@^8.4.21, postcss@^8.4.23, postcss@^8.4.4:
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
-preact@~10.12.1:
-  version "10.12.1"
-  resolved "https://registry.npmjs.org/preact/-/preact-10.12.1.tgz"
-  integrity sha512-l8386ixSsBdbreOAkqtrwqHwdvR35ID8c3rKPa8lCWuO86dBi32QWHV4vfsZK1utLLFMvw+Z5Ad4XLkZzchscg==
-
 prelude-ls@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.2.1.tgz"
@@ -8160,7 +8126,7 @@ react-app-polyfill@^3.0.0:
     regenerator-runtime "^0.13.9"
     whatwg-fetch "^3.6.2"
 
-react-big-calendar@^1.8.5:
+react-big-calendar@^1.8.2:
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/react-big-calendar/-/react-big-calendar-1.8.5.tgz#fdada71f84d53ff13bc9543666b69183e91ad6a5"
   integrity sha512-cra8WPfoTSQthFfqxi0k9xm/Shv5jWSw19LkNzpSJcnQhP6XGes/eJjd8P8g/iwaJjXIWPpg3+HB5wO5wabRyA==

@@ -1,10 +1,12 @@
 import axios from "axios";
+import moment from 'moment-timezone';
+
 import { dateObjToISO } from "./calendarHelpers";
 
 export const fetchProfileData = async () => {
   try {
-    const response = await axios.get(`http://localhost:8800/profile`)
-    return response.data
+    const response = await axios.get(`http://localhost:8800/profile`);
+    return response.data;
   } catch (error) {
     console.log(error);
   }
@@ -14,7 +16,7 @@ export const fetchProfileData = async () => {
 export const fetchEvents = async () => {
   try {
     const response = await axios.get("http://localhost:8800/event");
-    return response.data
+    return response.data;
   } catch (error) {
     console.log(error);
   }
@@ -34,22 +36,25 @@ export const addEvent = async (newEventData) => {
 
 // Edit event
 export const editEvent = async (state) => {
-    var start = dateObjToISO(state.start)
-    var end = dateObjToISO(state.end)
-
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const start = dateObjToISO(state.start, userTimeZone); 
+    const end = dateObjToISO(state.end, userTimeZone); 
+  
     console.log(start)
+    console.log(end)
+    
   try {
     const response = await axios.put(
       `http://localhost:8800/event/${state.id}`,
       {
-        id: state.id,
+        id: 1,
         title: state.title,
         start: start,
         end: end,
         distance: state.distance,
         user: state.user,
         description: state.description,
-        allDay: false
+        allDay: false,
       }
     );
     return response;

@@ -5,9 +5,18 @@ export const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          backgroundColor: "#e56069",
+          width: 200,
+          padding: 4, 
+          color: "#121727",
+          borderColor: "#121727",
+          borderWidth: 3,
+          borderRadius: 17,
           "&:hover": {
-            backgroundColor: "#ee919b",
+            borderWidth: 3,
+            borderRadius: 17,
+            borderColor: "#121727",
+            backgroundColor: "#121727",
+            color: "white"
           },
         },
       },
@@ -16,14 +25,14 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           "& label.Mui-focused": {
-            color: "#7062b8",
+            color: "#121727",
           },
           "& .MuiInput-underline:after": {
-            borderBottomColor: "#7062b8",
+            borderBottomColor: "#121727",
           },
           "& .MuiOutlinedInput-root": {
             "&.Mui-focused fieldset": {
-              borderColor: "#7062b8",
+              borderColor: "#121727",
             },
           },
         },
