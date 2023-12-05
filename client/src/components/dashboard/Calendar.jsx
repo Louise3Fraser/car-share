@@ -20,7 +20,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import {
   formatEvents,
   simpleToISO,
-  dateObjToISO,
+  disabledState,
+  currentUser,
 } from "./helpers/calendarHelpers";
 import {
   editEvent,
@@ -28,6 +29,7 @@ import {
   fetchEvents,
   fetchProfileData,
 } from "./helpers/dataApis";
+import { red } from "@mui/material/colors";
 
 const localizer = momentLocalizer(moment);
 
@@ -58,9 +60,15 @@ const users = [
     email: "louise3fraser@gmail.com",
     password: "Incorect3!",
   },
+  {
+    id: 2,
+    name: "Louise",
+    email: "louise3fraser@gmail.com",
+    password: "Incorect3!",
+  },
 ];
 
-export default function Calendar2() {
+export default function CalendarView() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState();
@@ -102,6 +110,7 @@ export default function Calendar2() {
 
   useEffect(() => {
     if (data && profileData) {
+      console.log(data)
       setLoading(false);
     }
   }, [data]);
@@ -109,7 +118,7 @@ export default function Calendar2() {
   // handle click of adding new event. sends request
   const clickAddEvent = async () => {
     handleCloseModal();
-    // addEvent(newEventData);
+    // addEvent(state);
   };
 
   // handle click of editing an event. sends request
@@ -157,6 +166,30 @@ export default function Calendar2() {
     return simpleToISO(newTime, originalStart);
   }
 
+  function CreateButton() {
+    console.log("hi")
+    console.log(state)
+    if (!disabledState(state)) {
+      return (
+        <Button size="small" color="primary" variant="outlined" disabled onClick={clickAddEvent}>
+          Create
+        </Button>
+      );
+    } else
+      return (
+        <Button size="small" color="primary" variant="outlined" onClick={clickAddEvent} >
+          Create
+        </Button>
+      );
+  }
+
+  function defaultUser() {
+    if (state && state.user) {
+      return state.user;
+    }
+    return currentUser();
+  }
+
   return (
     <Box>
       {!loading ? (
@@ -173,6 +206,7 @@ export default function Calendar2() {
           onSelectSlot={(event) => handleDateClick(event)}
           eventPropGetter={(event, start, end, isSelected) => {
             let newStyle = {
+              backgroundColor: red,
               backgroundColor: event.color,
               borderRadius: "0px",
               border: "none",
@@ -259,11 +293,12 @@ export default function Calendar2() {
               />
               <TextField
                 id="time"
-                onChange={(e) =>
+                onChange={(e) => {
+                  console.log(formatEndDate(e.target.value));
                   setState({
                     ...state,
                     end: formatEndDate(e.target.value),
-                  })
+                  })}
                 }
                 defaultValue={
                   state
@@ -305,7 +340,7 @@ export default function Calendar2() {
                 <PersonIcon />
                 <Select
                   sx={{ maxWidth: "100px", maxHeight: "30px" }}
-                  defaultValue={state ? state.user : ""}
+                  defaultValue={defaultUser()}
                   onChange={(e) =>
                     setState({
                       ...state,
@@ -313,13 +348,14 @@ export default function Calendar2() {
                     })
                   }
                 >
-                  {users.map((user) => {
-                    return (
-                      <MenuItem key={user.id} value={user.name}>
-                        {user.name}
-                      </MenuItem>
-                    );
-                  })}
+                  {profileData &&
+                    profileData.map((user) => {
+                      return (
+                        <MenuItem key={user.idprofile} value={user.user}>
+                          {user.user}
+                        </MenuItem>
+                      );
+                    })}
                 </Select>
               </div>
               <div className="icon-format">
@@ -356,11 +392,9 @@ export default function Calendar2() {
               </div>
             </div>
             {modal === "create" ? (
-              <Button onClick={clickAddEvent} sx={{ color: "white" }}>
-                Create
-              </Button>
+              <CreateButton />
             ) : (
-              <Button onClick={clickEditEvent} sx={{ color: "white" }}>
+              <Button size="small" color="primary" variant="outlined" onClick={clickEditEvent}>
                 Save
               </Button>
             )}

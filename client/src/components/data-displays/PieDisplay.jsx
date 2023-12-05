@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { PieChart, Pie, ResponsiveContainer } from "recharts";
-import { Box, Typography } from "@mui/material";
+import { Box, Card, Typography } from "@mui/material";
 import axios from "axios";
 
 export default function PieDisplay() {
@@ -9,8 +9,8 @@ export default function PieDisplay() {
   const [maxGas, setMaxGas] = useState();
 
   const data01 = [
-    { name: "Louise", value:  30},
-    { name: "Greer", value: 300 },
+    { name: "Louise", value:  20, fill: "#66da99"},
+    { name: "Greer", value: 300, fill: "#f2a53a" },
   ];
 
   useEffect(() => {
@@ -35,16 +35,18 @@ export default function PieDisplay() {
   }, [data]);
 
   return (
-    <Box
+    <Card
+    elevation={0}
       sx={{
         aspectRatio: "1",
+        
         width: "200px",
         backgroundColor: "white",
-        borderRadius: "20px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         padding: "20px",
+        // backgroundColor: "#e3eaff"
       }}
     >
       <Typography variant="subheading">Gas Usage</Typography>
@@ -61,6 +63,6 @@ export default function PieDisplay() {
           />
         </PieChart>
       </ResponsiveContainer>
-    </Box>
+    </Card>
   );
 }
