@@ -24,10 +24,10 @@ export const fetchEvents = async () => {
 
 // Add new event
 export const addEvent = async (newEventData) => {
+  console.log("After sent:")
+  console.log(newEventData)
   try {
-    const response = await axios.post("http://localhost:8800/event", {
-      newEventData,
-    });
+    const response = await axios.post("http://localhost:8800/event", newEventData);
     return response;
   } catch (err) {
     console.log(err);
