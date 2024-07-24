@@ -5,13 +5,15 @@ export function formatEvents(data) {
   let formattedEvents = [];
 
   data.forEach((event) => {
+    console.log("before event")
+    console.log(event)
     var start = new Date(event.start);
     const offsetInMinutes = -360; // Central Standard Time (CST) offset is -6 hours from UTC
     start.setMinutes(start.getMinutes() - offsetInMinutes);
 
     var end = new Date(event.end);
     end.setMinutes(start.getMinutes() - offsetInMinutes);
-
+    
     const formattedEvent = {
       id: event.id,
       title: event.title,
@@ -21,7 +23,11 @@ export function formatEvents(data) {
       user: event.user,
       description: event.description,
       color: event.color,
+      allDay: event.allDay
     };
+
+    console.log("After")
+    console.log(formattedEvent)
 
     formattedEvents.push(formattedEvent);
   });

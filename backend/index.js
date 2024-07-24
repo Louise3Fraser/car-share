@@ -27,17 +27,17 @@ backend.get("/event", (req, res) => {
 
 backend.post("/event", (req, res) => {
   const q =
-    "INSERT INTO event(`title`, `description`, `distance`, `user`, `color`, `allDay`, `start`, `end`) VALUES (?)";
+    "INSERT INTO event(`title`, `description`, `distance`, `user`, `allDay`, `start`, `end`, `color`) VALUES (?)";
 
   const values = [
     req.body.title,
     req.body.description,
     req.body.distance,
     req.body.user,
-    req.body.color,
     req.body.allDay,
     req.body.start,
     req.body.end,
+    req.body.color,
   ];
 
   calendar_db.query(q, [values], (err, data) => {

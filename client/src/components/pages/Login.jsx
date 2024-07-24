@@ -11,6 +11,7 @@ import CarShare from "../../images/logo-black.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+
 function userExists(arr, key, val) {
   for (var i = 0; i < arr.length; i++) {
     if (arr[i][key] === val) return true;
@@ -20,7 +21,6 @@ function userExists(arr, key, val) {
 
 export default function Login() {
   const navigate = useNavigate();
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginResponse, setLoginResponse] = useState();
@@ -32,19 +32,19 @@ export default function Login() {
       setLoginResponse(response.data);
     } catch (err) {
       console.log(err);
-      setError("Server error");
+      setError("Server error. Please try again later.");
     }
   };
 
   useEffect(() => {
     if (loginResponse) {
-      if (userExists(loginResponse, "email", username)) {
-        if (userExists(loginResponse, "password", password)) {
+      if ((userExists(loginResponse, "email", username)) && (userExists(loginResponse, "password", password))) {
           const user = loginResponse.find((item) => item.email === username);
+          console.log("user:")
+          console.log(user)
           sessionStorage.setItem("user", JSON.stringify(user));
           navigate("/");
         }
-      }
       setError("Incorrect credentials");
     }
   }, [loginResponse, navigate, setLoginResponse]);

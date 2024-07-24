@@ -5,8 +5,6 @@ import Login from "./components/pages/Login";
 import Profile from "./components/pages/Profile";
 
 function AppRouter() {
-  const user = sessionStorage.getItem("user");
-
   function ProtectedRoutes({children}) {
     if (!sessionStorage.getItem("user")) {
       return <Navigate to="/login" />;
