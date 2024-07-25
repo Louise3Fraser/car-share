@@ -1,32 +1,27 @@
-import { Typography, Box, IconButton, Card } from "@mui/material";
 import React from "react";
 import "../../style/Welcome.css";
-import { useNavigate } from "react-router-dom";
-
+import moment from "moment";
 
 export default function Welcome() {
   const user = sessionStorage.getItem("user");
   const userObject = JSON.parse(user);
-  const name = userObject.name;
-  const navigate = useNavigate();
 
-  
+  function formatDate() {
+    const today = new Date();
+    return moment(today).format("Do, MMMM");
+  }
+
   return (
-    // <Card
-    //   sx={{
-    //     display: "flex", flexDirection: "row",
-    //     justifyContent: "space-between",
-    //     width: `calc(100% - 80px)`,
-    //     backgroundColor: "white",
-    //     borderRadius: "20px",
-    //     padding: "20px",
-    //   }}
-    // >
-      <div className="welcome">
-        <Typography variant="h6">Welcome back, </Typography>
-        <Typography variant="h4">{userObject.name}!</Typography>
-      </div>
-      
-    // </Card>
+    <div
+      className="welcome"
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+      }}
+    >
+      <h2>Welcome back, {userObject.name}! </h2>
+      <h2>{formatDate()} </h2>
+    </div>
   );
 }

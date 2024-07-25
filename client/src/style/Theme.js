@@ -1,16 +1,21 @@
 import { createTheme } from "@mui/material/styles";
 
+const fontFamily = '"Ubuntu", sans-serif'
+
 export const theme = createTheme({
+  typography: {
+    fontFamily: fontFamily,
+  },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          width: 200,
           padding: 4, 
           color: "#121727",
           borderColor: "#121727",
           borderWidth: 3,
           borderRadius: 17,
+          fontFamily: fontFamily,
           "&:hover": {
             borderWidth: 3,
             borderRadius: 17,
@@ -21,6 +26,7 @@ export const theme = createTheme({
         },
       },
     },
+   
     MuiTextField: {
       styleOverrides: {
         root: {

@@ -1,7 +1,29 @@
 .Calendar {
   display: flex;
   padding-top: 100px;
-  flex-grow: 1;
+  flex-grow: 0;
+}
+
+.toolbar-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0px;
+  /* background-color: #f0f2f7; */
+  border-radius: 10px;
+  margin-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 10px;
+  /* border: 1px solid #ddd; */
+}
+
+.back-next-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
 }
 
 h2 {
@@ -13,6 +35,14 @@ b {
   margin-right: 3px;
 }
 
+.rbc-event-content {
+  font-family: "Ubuntu", sans-serif;
+  font-size: 12px;
+}
+
+.rbc-event {
+  border-radius: 5px !important;
+}
 .icon-format {
   display: flex;
   flex-direction: row;
@@ -21,7 +51,6 @@ b {
 }
 
 .rbc-month-view {
-  padding: 10px;
   border-radius: 10px;
   position: relative;
   display: flex;
@@ -40,6 +69,9 @@ b {
   background-color: white;
 }
 
+.rbc-day-slot .rbc-time-slot {
+  /* border-top: 0px !important; */
+}
 .rbc-toolbar button {
   background-color: #ccc;
   color: #121727 !important;
@@ -86,11 +118,14 @@ b {
 }
 
 .rbc-calendar {
-  padding: 20px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  margin-bottom: 5px;
+  padding: 13px;
+  background-color: white;
+  border-radius: 10px;
 }
 
 .rbc-row .rbc-month-header {
@@ -100,16 +135,30 @@ b {
 
 .rbc-row .rbc-header {
   padding: 20px;
+  border-left: 0px !important;
+}
+
+.rbc-header {
+  padding: 10px !important;
+}
+
+.rbc-month-header {
+  background-color: #f0f2f7 !important;
+  border-radius: 7px;
 }
 
 .rbc-row-bg .rbc-off-range-bg {
-  background: #f2f3f7;
+  background: #ffffff;
 }
 
 .rbc-today {
-  background-color: #d6dced !important;
+  background-color: #f0f2f7 !important;
 }
 
 .rbc-toolbar-label {
   font-size: 20px;
+}
+
+.rbc-off-range {
+  color: #cccccc !important;
 }
