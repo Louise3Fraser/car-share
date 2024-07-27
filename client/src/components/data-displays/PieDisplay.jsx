@@ -9,7 +9,7 @@ export default function PieDisplay() {
   const [maxGas, setMaxGas] = useState();
 
   const data01 = [
-    { name: "Louise", value:  20, fill: "#66da99"},
+    { name: "Louise", value: 20, fill: "#66da99" },
     { name: "Greer", value: 300, fill: "#f2a53a" },
   ];
 
@@ -36,10 +36,9 @@ export default function PieDisplay() {
 
   return (
     <Card
-    elevation={0}
+      elevation={2}
       sx={{
         aspectRatio: "1",
-        
         width: "200px",
         backgroundColor: "white",
         display: "flex",
@@ -49,7 +48,7 @@ export default function PieDisplay() {
         // backgroundColor: "#e3eaff"
       }}
     >
-      <Typography variant="subheading">Gas Usage</Typography>
+      {/* <Typography variant="subheading">Gas Usage</Typography> */}
       <ResponsiveContainer width="100%" height={250}>
         <PieChart>
           <Pie

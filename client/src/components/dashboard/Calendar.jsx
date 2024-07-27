@@ -5,7 +5,6 @@ import "../../style/Calendar.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
   Box,
-  Button,
   MenuItem,
   Modal,
   Select,
@@ -17,10 +16,7 @@ import {
 import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import NotesIcon from "@mui/icons-material/Notes";
 import PersonIcon from "@mui/icons-material/Person";
-import {
-  formatEvents,
-  disabledState,
-} from "./helpers/calendarHelpers";
+import { formatEvents, disabledState } from "./helpers/calendarHelpers";
 import {
   editEvent,
   addEvent,
@@ -28,6 +24,12 @@ import {
   fetchProfileData,
 } from "./helpers/dataApis";
 import { red } from "@mui/material/colors";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { ThemeProvider, useTheme } from "@mui/material/styles";
+import TodayIcon from "@mui/icons-material/Today";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { IconButton, Button, ButtonGroup } from "@mui/material";
 
 const localizer = momentLocalizer(moment);
 
@@ -44,8 +46,31 @@ const style = {
   p: 4,
 };
 
+function CustomToolbar({ label, onNavigate, onView }) {
+  return (
+    <div className="toolbar-container">
+      <div className="back-next-buttons">
+        <h3 className="label-date">{label}</h3>
+        <div>
+          <IconButton aria-label="back" onClick={() => onNavigate("PREV")}>
+            <ArrowBackIcon sx={{ color: "#121727", fontSize: 20 }} />
+          </IconButton>
+          <IconButton aria-label="today" onClick={() => onNavigate("TODAY")}>
+            <TodayIcon sx={{ color: "#121727", fontSize: 20 }} />
+          </IconButton>
+          <IconButton aria-label="next" onClick={() => onNavigate("NEXT")}>
+            <ArrowForwardIcon sx={{ color: "#121727", fontSize: 20 }} />
+          </IconButton>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CalendarView() {
   const [data, setData] = useState([]);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState();
   const [state, setState] = useState({
@@ -110,16 +135,22 @@ export default function CalendarView() {
     await addEvent(state);
 
     setData((prevData) => {
-    const updatedData = [...prevData, state];
-    setEvents(formatEvents(updatedData)); // Update events with formatted data
-    return updatedData;
-  }); };
+      const updatedData = [...prevData, state];
+      setEvents(formatEvents(updatedData)); // Update events with formatted data
+      return updatedData;
+    });
+  };
 
   // handle click of editing an event. sends request
   const clickEditEvent = async () => {
     handleCloseModal();
-    const events = editEvent(state);
-    setData(events);
+    await editEvent(state);
+
+    setData((prevData) => {
+      const updatedData = [...prevData, state];
+      setEvents(formatEvents(updatedData)); // Update events with formatted data
+      return updatedData;
+    });
   };
 
   /**
@@ -127,9 +158,6 @@ export default function CalendarView() {
    * @param selected The clicked/selected data.
    */
   const handleDateClick = (selected) => {
-    // console.log("selected:");
-    // console.log(selected.start);
-
     // Reset state field:
     setState({
       ...state,
@@ -146,8 +174,6 @@ export default function CalendarView() {
       allDay: 0,
       color: assignColor(state.user),
     });
-
-    // Modal version: CREATE new event
     setModal("create");
   };
 
@@ -157,6 +183,7 @@ export default function CalendarView() {
    */
   const handleEventClick = (selected) => {
     setModal("edit");
+    console.log(selected);
     setState(selected);
   };
 
@@ -165,7 +192,6 @@ export default function CalendarView() {
       // Need to default times to correct time object:
       setOriginalStart(state.start);
       setOriginalEnd(state.end);
-
       handleOpenModal();
     }
   }, [modal]);
@@ -189,13 +215,20 @@ export default function CalendarView() {
   function CreateButton() {
     if (!disabledState(state)) {
       return (
-        <Button size="small" color="primary" variant="outlined" disabled>
+        <Button
+          sx={{ width: "120px" }}
+          size="small"
+          color="primary"
+          variant="outlined"
+          disabled
+        >
           Create
         </Button>
       );
     } else
       return (
         <Button
+          sx={{ width: "120px" }}
           size="small"
           color="primary"
           variant="outlined"
@@ -212,10 +245,14 @@ export default function CalendarView() {
         <Calendar
           localizer={localizer}
           defaultView="month"
-          views={["month", "week"]}
+          views={["month"]}
           selectable={true}
           events={events}
-          style={{ height: "100vh" }}
+          components={{ toolbar: CustomToolbar }}
+          style={{
+            minHeight: "500px",
+            height: isMobile ? "50vh" : "80vh", // Adjust height based on screen size
+          }}
           startAccessor="start"
           endAccessor="end"
           onSelectEvent={(event) => handleEventClick(event)}
@@ -245,162 +282,170 @@ export default function CalendarView() {
       >
         <Box sx={style}>
           <div
-            style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+            id="titleButton"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "20px",
+              alignItems: "center",
+            }}
           >
-            {modal === "create" ? (
-              <Typography
-                sx={{ display: "flex", justifyContent: "center" }}
-                id="modal-modal-title"
-                variant="h6"
-                component="h2"
-              >
-                Create New Event
-              </Typography>
-            ) : (
-              <Typography
-                sx={{ display: "flex", justifyContent: "center" }}
-                id="modal-modal-title"
-                variant="h6"
-                component="h2"
-              >
-                Edit Event
-              </Typography>
-            )}
-
-            <TextField
-              required
-              variant="standard"
-              value={state.title}
-              onChange={(e) =>
-                setState({
-                  ...state,
-                  title: e.target.value,
-                })
-              }
-              label="Title"
-            />
             <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
+              id="innerElements"
+              style={{ display: "flex", flexDirection: "column", gap: "20px" }}
             >
+              {modal === "create" ? (
+                <h2>Create New Event</h2>
+              ) : (
+                <Typography
+                  sx={{ display: "flex", justifyContent: "center" }}
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h2"
+                >
+                  Edit Event
+                </Typography>
+              )}
+
               <TextField
                 required
-                id="time"
-                label="Start"
-                type="time"
-                value={moment(state.start).format("HH:mm")}
-                onChange={(e) => {
-                  console.log(e.target.value);
+                variant="standard"
+                value={state.title}
+                onChange={(e) =>
                   setState({
                     ...state,
-                    start: formatStartDate(e.target.value),
-                  });
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                disabled={Boolean(state.allDay)}
+                    title: e.target.value,
+                  })
+                }
+                label="Title"
               />
-              <TextField
-                required
+              <div
                 id="time"
-                label="End"
-                type="time"
-                value={moment(state.end).format("HH:mm")}
-                onChange={(e) => {
-                  console.log(e.target.value);
-                  setState({
-                    ...state,
-                    end: formatEndDate(e.target.value),
-                  });
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  gap: "5px",
                 }}
-                InputLabelProps={{
-                  shrink: true,
+              >
+                <TextField
+                  required
+                  id="time"
+                  label="Start"
+                  type="time"
+                  value={moment(state.start).format("HH:mm")}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    setState({
+                      ...state,
+                      start: formatStartDate(e.target.value),
+                    });
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  disabled={Boolean(state.allDay)}
+                />
+                <TextField
+                  required
+                  id="time"
+                  label="End"
+                  type="time"
+                  value={moment(state.end).format("HH:mm")}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    setState({
+                      ...state,
+                      end: formatEndDate(e.target.value),
+                    });
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  disabled={Boolean(state.allDay)}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={Boolean(state.allDay)}
+                      onChange={(e) =>
+                        setState({
+                          ...state,
+                          allDay: e.target.checked,
+                        })
+                      }
+                    />
+                  }
+                  labelPlacement="start"
+                  label="All day?"
+                />
+              </div>
+              <div
+                id="textfields"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
                 }}
-                disabled={Boolean(state.allDay)}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={Boolean(state.allDay)}
+              >
+                <div className="icon-format">
+                  <PersonIcon />
+                  <Select
+                    sx={{ maxWidth: "100px", maxHeight: "30px" }}
+                    value={state.user}
+                    onChange={(e) => {
+                      const selectedUser = e.target.value;
+                      const color = assignColor(selectedUser);
+                      setState({
+                        ...state,
+                        user: selectedUser,
+                        color: color,
+                      });
+                    }}
+                  >
+                    {profileData &&
+                      profileData.map((user) => {
+                        return (
+                          <MenuItem key={user.idprofile} value={user.user}>
+                            {user.user}
+                          </MenuItem>
+                        );
+                      })}
+                  </Select>
+                </div>
+                <div className="icon-format">
+                  <NotesIcon />
+                  <TextField
+                    required
+                    fullWidth
+                    variant="standard"
+                    value={state.description}
                     onChange={(e) =>
                       setState({
                         ...state,
-                        allDay: e.target.checked,
+                        description: e.target.value,
                       })
                     }
+                    label="Description"
                   />
-                }
-                labelPlacement="start"
-                label="All day?"
-              />
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-              }}
-            >
-              <div className="icon-format">
-                <PersonIcon />
-                <Select
-                  sx={{ maxWidth: "100px", maxHeight: "30px" }}
-                  value={state.user}
-                  onChange={(e) => {
-                    const selectedUser = e.target.value;
-                    const color = assignColor(selectedUser);
-                    setState({
-                      ...state,
-                      user: selectedUser,
-                      color: color,
-                    });
-                  }}
-                >
-                  {profileData &&
-                    profileData.map((user) => {
-                      return (
-                        <MenuItem key={user.idprofile} value={user.user}>
-                          {user.user}
-                        </MenuItem>
-                      );
-                    })}
-                </Select>
-              </div>
-              <div className="icon-format">
-                <NotesIcon />
-                <TextField
-                  required
-                  variant="standard"
-                  value={state.description}
-                  onChange={(e) =>
-                    setState({
-                      ...state,
-                      description: e.target.value,
-                    })
-                  }
-                  label="Description"
-                  multiline
-                />
-              </div>
+                </div>
 
-              <div className="icon-format">
-                <LocalGasStationIcon />
-                <TextField
-                  required
-                  variant="standard"
-                  value={state.distance}
-                  onChange={(e) =>
-                    setState({
-                      ...state,
-                      distance: e.target.value,
-                    })
-                  }
-                  label="Estimated distance"
-                />
+                <div className="icon-format">
+                  <LocalGasStationIcon />
+                  <TextField
+                    required
+                    fullWidth
+                    variant="standard"
+                    value={state.distance}
+                    onChange={(e) =>
+                      setState({
+                        ...state,
+                        distance: e.target.value,
+                      })
+                    }
+                    label="Estimated distance"
+                  />
+                </div>
               </div>
             </div>
             {modal === "create" ? (
@@ -411,6 +456,7 @@ export default function CalendarView() {
                 color="primary"
                 variant="outlined"
                 onClick={clickEditEvent}
+                sx={{ width: "120px" }}
               >
                 Save
               </Button>

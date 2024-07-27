@@ -1,4 +1,9 @@
-.Stats {
+.stats {
   display: flex;
-  gap: 20px;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: white;
+  padding: 20px;
 }

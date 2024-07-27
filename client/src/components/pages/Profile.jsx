@@ -54,7 +54,7 @@ export default function Profile() {
   useEffect(() => {
     if (data && data[0]) {
       const user = data.find((item) => item.idprofile === id);
-      console.log(user)
+      console.log(user);
       setColorCurr(user.color);
     }
   }, [data]);
@@ -79,55 +79,7 @@ export default function Profile() {
 
   return (
     <div className="Layout">
-      <Drawer
-        sx={{
-          flexShrink: 0,
-          width: drawerWidth,
-          "& .MuiDrawer-paper": {
-            backgroundColor: "#121727",
-            borderColor: "transparent",
-            width: drawerWidth,
-          },
-        }}
-        variant="permanent"
-        anchor="left"
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            height: "calc(100% - 64px)",
-            padding: "20px",
-          }}
-        >
-          <IconButton sx={{ color: "white" }} onClick={home}>
-            <Tooltip title="Dashboard" placement="right">
-              <GridViewIcon />
-            </Tooltip>
-          </IconButton>
-          <IconButton sx={{ color: "white" }} onClick={home}>
-            <Tooltip title="Calendar" placement="right">
-              <CalendarTodayIcon />
-            </Tooltip>
-          </IconButton>
-          <IconButton sx={{ color: "white" }} onClick={logout}>
-            <Tooltip title="Logout" placement="right">
-              <LogoutIcon />
-            </Tooltip>
-          </IconButton>
-        </Box>
-      </Drawer>
-      <Box
-        sx={{
-          position: "sticky",
-          overflowY: "scroll",
-          overflowX: "hidden",
-          width: `calc(100% - ${drawerWidth}px)`,
-          ml: `${drawerWidth}px`,
-        }}
-      >
+     
         <Typography
           variant="h5"
           sx={{ paddingTop: "80px", paddingLeft: "80px" }}
@@ -208,7 +160,6 @@ export default function Profile() {
             </div>
           </div>
         </div>
-      </Box>
     </div>
   );
 }
