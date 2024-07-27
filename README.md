@@ -12,5 +12,5 @@ Realm stats will include information such as:
 App utilizes React.js, calendar api, mySQL database, frontend + backend development.
 
 ## Current Visuals
-<img width="100" alt="Screenshot 2024-07-27 at 2 39 33 PM" src="https://github.com/user-attachments/assets/9061598d-3fa6-45f3-8b95-f754d254375d">
+<img width="600" alt="Screenshot 2024-07-27 at 2 39 33 PM" src="https://github.com/user-attachments/assets/9061598d-3fa6-45f3-8b95-f754d254375d">
 <img width="1232" alt="Screenshot 2024-07-27 at 3 00 48 PM" src="https://github.com/user-attachments/assets/ccce31b5-c65a-46bb-855b-714beda928d1">
