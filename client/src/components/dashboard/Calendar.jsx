@@ -51,21 +51,17 @@ function CustomToolbar({ label, onNavigate, onView }) {
     <div className="toolbar-container">
       <div className="back-next-buttons">
         <h3 className="label-date">{label}</h3>
-        <IconButton aria-label="back" onClick={() => onNavigate("PREV")}>
-          <ArrowBackIcon />
-        </IconButton>
-        <IconButton aria-label="today" onClick={() => onNavigate("TODAY")}>
-          <TodayIcon />
-        </IconButton>
-        <IconButton aria-label="next" onClick={() => onNavigate("NEXT")}>
-          <ArrowForwardIcon />
-        </IconButton>
-      </div>
-
-      <div className="toolbar-views">
-        <Button onClick={() => onView("month")}>Month</Button>
-        <Button onClick={() => onView("week")}>Week</Button>
-        <Button onClick={() => onView("day")}>Day</Button>
+        <div>
+          <IconButton aria-label="back" onClick={() => onNavigate("PREV")}>
+            <ArrowBackIcon sx={{ color: "#121727", fontSize: 20 }} />
+          </IconButton>
+          <IconButton aria-label="today" onClick={() => onNavigate("TODAY")}>
+            <TodayIcon sx={{ color: "#121727", fontSize: 20 }} />
+          </IconButton>
+          <IconButton aria-label="next" onClick={() => onNavigate("NEXT")}>
+            <ArrowForwardIcon sx={{ color: "#121727", fontSize: 20 }} />
+          </IconButton>
+        </div>
       </div>
     </div>
   );
@@ -249,13 +245,13 @@ export default function CalendarView() {
         <Calendar
           localizer={localizer}
           defaultView="month"
-          views={["month", "week", "day"]}
+          views={["month"]}
           selectable={true}
           events={events}
           components={{ toolbar: CustomToolbar }}
           style={{
             minHeight: "500px",
-            height: isMobile ? "600px" : "600px", // Adjust height based on screen size
+            height: isMobile ? "50vh" : "80vh", // Adjust height based on screen size
           }}
           startAccessor="start"
           endAccessor="end"

@@ -18,14 +18,14 @@ export default function Agenda() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
-  const screenSize = useMediaQuery(theme.breakpoints.up("md"));
 
   // Get database events
   useEffect(() => {
     async function fetchData() {
       try {
         const events = await fetchEvents();
-        setData(events);
+        const sortedEvents = events.sort((a, b) => new Date(a.start) - new Date(b.start));
+        setData(sortedEvents);
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -69,7 +69,7 @@ export default function Agenda() {
                       padding: 1.3,
                     }}
                   >
-                    <h3>{event.title}</h3>
+                    <h4>{event.title}</h4>
                     <div
                       id="time"
                       style={{

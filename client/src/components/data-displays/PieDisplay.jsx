@@ -39,7 +39,6 @@ export default function PieDisplay() {
       elevation={2}
       sx={{
         aspectRatio: "1",
-
         width: "200px",
         backgroundColor: "white",
         display: "flex",
